@@ -14,13 +14,6 @@ namespace Generator;
 class ClassGenerator extends AbstractGenerator{
     const __NAMESPACE       = '\n&#60;?php'
                             . '\n\nnamespace Entity;';
-    const ANNOTATION_START  = '\n/**\n* @author Marcos Alexandre de Oliveira';
-    const ANNOTATION_END    = '\n*/';
-    const TAG_START         = '\nclass ';
-    const TAG_END           = '\n}';
-    const CONSTRUCT_START   = '\n   public function __construct() {';
-    const CONSTRUCT_END     = '\n   }\n\n';
-    
     const __ANNOTATION      = '\n/**'
                             . '\n* @author Marcos Alexandre de Oliveira'
                             . '\n*/';
