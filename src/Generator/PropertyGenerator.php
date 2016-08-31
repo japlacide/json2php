@@ -12,10 +12,12 @@ namespace Generator;
  * @author MarcosAlexandrede
  */
 class PropertyGenerator extends AbstractGenerator{
-    const ANNOTATION_START  = '\n   /**\n   * @var ';
-    const ANNOTATION_END    = '\n   */';
-    const TAG_START         = '\n   protected $';
-    const TAG_END           = ';\n\n';
+    const __PROPERTY    
+        = '\n   /**'
+        . '\n   * @var %(type)s'
+        . '\n   */'
+        . '\n   protected $%(var)s;'
+        . '\n';
     protected $arrayProperty = array();
     public function __construct(array $param) {
         
@@ -32,15 +34,10 @@ class PropertyGenerator extends AbstractGenerator{
         foreach ($this->arrayClass as $className => $objectArray) {
             foreach ($objectArray as $object) {
                 $this->arrayProperty[$className] = $this->getIfIsSet($this->arrayProperty, $className)
-                        .self::ANNOTATION_START 
-                        .($object->getIsClass()
-                            ?$this->convertToPascalCase($object->getName())
-                                :$object->getType()
-                        )
-                        .self::ANNOTATION_END
-                        .self::TAG_START
-                        .$object->getName()
-                        .self::TAG_END;
+                        .str_replace("%(var)s", $object->getName(),
+                            str_replace("%(type)s", ($object->getIsClass()
+                                ? $this->convertToPascalCase($object->getName())
+                                : $object->getType()), self::__PROPERTY));
             }
         }
     }

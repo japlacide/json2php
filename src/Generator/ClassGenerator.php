@@ -12,24 +12,28 @@ namespace Generator;
  * @author MarcosAlexandrede
  */
 class ClassGenerator extends AbstractGenerator{
-    const __NAMESPACE       = '\n&#60;?php'
-                            . '\n\nnamespace Entity;';
-    const __ANNOTATION      = '\n/**'
-                            . '\n* @author Marcos Alexandre de Oliveira'
-                            . '\n*/';
-    const __CLASS           = '\nclass %(className)s {'
-                            . '\n\n     %(propertys)s'
-                            . '\n   public function __construct() {'
-                            . '\n       %(newObjects)s'
-                            . '\n   }'
-                            . '\n\n     %(methods)s'
-                            . '\n\n}';
-    const __OBJ             = '\n      $this->%(var)s = new %(class)s();'; 
+    const __CLASS   
+        = '\n&#60;?php'
+        . '\n'
+        . '\nnamespace Entity;'
+        . '\n'
+        . '\n/**'
+        . '\n* @author Marcos Alexandre de Oliveira'
+        . '\n*/'
+        . '\nclass %(className)s {'
+        . '\n'
+        . '\n   %(propertys)s'
+        . '\n   public function __construct() {'
+        . '\n       %(newObjects)s'
+        . '\n   }'
+        . '\n   %(methods)s'
+        . '\n\n}';
+    const __NEW = '\n       $this->%(var)s = new %(class)s();'; 
 
-                    /**
-     *
-     * @var PropertyGenerator
-     */
+    /**
+    *
+    * @var PropertyGenerator
+    */
     private $property;
     
     /**
@@ -72,16 +76,16 @@ class ClassGenerator extends AbstractGenerator{
     
     public function montClass() {
         foreach ($this->arrayClass as $className => $objectArray) {
-            $this->arrayFileClass[$className] = self::__NAMESPACE.self::__ANNOTATION
-            .str_replace("%(methods)s",$this->method->getItemArrayMethod($className),    
-             str_replace("%(propertys)s",$this->property->getItemArrayProperty($className),
-             str_replace("%(className)s",$className,self::__CLASS)));
+            $this->arrayFileClass[$className] = str_replace("%(methods)s",
+                    $this->method->getItemArrayMethod($className),    
+                    str_replace("%(propertys)s",$this->property->getItemArrayProperty($className),
+                        str_replace("%(className)s",$className,self::__CLASS)));
             $newObjects = '';
             foreach ($objectArray as $object) {
                 if ($object->getIsClass()) {
                     $newObjects .= str_replace("%(class)s",
                         $this->convertToPascalCase($object->getName()),
-                        str_replace("%(var)s", $object->getName(), self::__OBJ)
+                        str_replace("%(var)s", $object->getName(), self::__NEW)
                     );
                 }
             }

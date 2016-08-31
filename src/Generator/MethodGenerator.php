@@ -14,13 +14,21 @@ namespace Generator;
  * @author MarcosAlexandrede
  */
 class MethodGenerator extends AbstractGenerator {
-
-    const ANNOTATION_START_SET  = '\n   /**\n   * @param ';
-    const ANNOTATION_END_SET    = '\n   */';
-    const TAG_START             = '\n   private function ';
-    const ANNOTATION_START_GET  = '\n   /**\n   * @return ';
-    const ANNOTATION_END_GET    = '\n   */';
-    const TAG_END               = '\n   }\n\n';
+    const __METHODS 
+        = '\n   /**'
+        . '\n   *  @param %(type)s'
+        . '\n   */'
+        . '\n   public function set%(nameCC)s(%(type)s $%(var)s) {'
+        . '\n       $this->%(var)s = $%(var)s;'
+        . '\n   }'
+        . '\n'
+        . '\n   /**'
+        . '\n   *  @return %(type)s'
+        . '\n   */'
+        . '\n   public function get%(nameCC)s() {'
+        . '\n       return $this->%(var)s;'
+        . '\n   }'
+        . '\n';
 
     protected $arrayMethod = array();
 
@@ -37,26 +45,13 @@ class MethodGenerator extends AbstractGenerator {
     private function prepareProperty() {
         foreach ($this->arrayClass as $className => $objectArray) {
             foreach ($objectArray as $object) {
-                $this->arrayMethod[$className] = $this->getIfIsSet($this->arrayMethod, $className)
-                . self::ANNOTATION_START_SET
-                . ($object->getIsClass() 
-                        ? $this->convertToPascalCase($object->getName()) 
-                        : $object->getType()
-                )
-                .self::ANNOTATION_END_SET.self::TAG_START."set"
-                .$this->convertToPascalCase($object->getName())."("
-                . ($object->getIsClass() 
-                        ? $this->convertToPascalCase($object->getName()) 
-                        : $object->getType()
-                )." $".$object->getName()."){"
-                .'\n      $this->'.$object->getName()." = $".$object->getName()
-                .";\n".self::TAG_END.self::ANNOTATION_START_GET
-                . ($object->getIsClass() 
-                        ? $this->convertToPascalCase($object->getName()) 
-                        : $object->getType()
-                ).self::ANNOTATION_END_GET.self::TAG_START."get"
-                .$this->convertToPascalCase($object->getName())."(){"
-                .'\n      return $this->'.$object->getName().";".self::TAG_END;
+                $this->arrayMethod[$className] = $this->getIfIsSet($this->arrayMethod, $className). 
+                    str_replace("%(var)s", $object->getName(), 
+                        str_replace("%(nameCC)s",
+                            $this->convertToPascalCase($object->getName()),
+                            str_replace("%(type)s", ($object->getIsClass() 
+                                    ? $this->convertToPascalCase($object->getName()) 
+                                    : $object->getType()), self::__METHODS)));
             }
         }
         
